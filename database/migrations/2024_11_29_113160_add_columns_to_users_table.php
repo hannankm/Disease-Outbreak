@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
+
+            // $table->dropPrimary();
+
+            // // Drop the existing auto-increment column 'id'
+            // $table->dropColumn('id');
+
+            // // Add the 'id' as UUID and set it as primary key
+            // $table->uuid('id')->primary()->first(); // Set 'id' as primary key
+
             $table->string('phone_number');
             $table->uuid('region_id')->nullable();  
             $table->uuid('woreda_id')->nullable();  
@@ -31,7 +40,13 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
+             $table->dropForeign(['region_id']);
+            $table->dropForeign(['woreda_id']);
             $table->dropColumn(['phone_number', 'woreda_id', 'region_id']);
+
+            // Convert 'id' column back to auto-increment integer and primary key
+            // $table->dropPrimary();
+            // $table->bigIncrements('id')->first(); 
 
         });
     }

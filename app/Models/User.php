@@ -12,13 +12,18 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
+
+     protected $keyType = 'string'; 
+     public $incrementing = false; 
+
+
     protected $fillable = [
         'name',
         'email',
@@ -27,6 +32,14 @@ class User extends Authenticatable
         'woreda_id', 
         'region_id'
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            $model->id = (string) Str::uuid();  
+        });
+    }
+
 
     /**
      * The attributes that should be hidden for serialization.

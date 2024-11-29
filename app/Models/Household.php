@@ -11,6 +11,9 @@ class Household extends Model
 {
     use HasFactory;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'full_name',
         'phone_number',
@@ -24,16 +27,6 @@ class Household extends Model
         'woreda_id'
     ];
 
-    protected $keyType = 'string'; 
-    public $incrementing = false; 
-
-    protected static function booted()
-    {
-        static::creating(function ($model) {
-            $model->id = (string) Str::uuid();  
-        });
-    }
-
     public function supervisor()
     {
         return $this->belongsTo(User::class);
@@ -42,6 +35,15 @@ class Household extends Model
     public function woreda()
     {
         return $this->belongsTo(Woreda::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($woreda) {
+            $woreda->id = (string) Str::uuid(); // Generate UUID when creating a new woreda
+        });
     }
 
 }
