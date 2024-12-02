@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Woreda;
 use App\Models\Zone;
+use App\Models\Woreda;
 use Illuminate\Http\Request;
+use App\Http\Resources\WoredaResource;
 
 class WoredaController extends Controller
 {
@@ -12,8 +13,9 @@ class WoredaController extends Controller
     public function index($zoneId)
     {
         $zone = Zone::findOrFail($zoneId);
-        $woredas = $zone->woredas;
-        return response()->json($woredas);
+
+        // Use WoredaResource for structured response
+        return WoredaResource::collection($zone->woredas);
     }
 
     // Store a newly created woreda
@@ -29,7 +31,8 @@ class WoredaController extends Controller
             'name' => $request->name,
         ]);
 
-        return response()->json($woreda, 201);
+        // Wrap the created woreda in WoredaResource
+        return new WoredaResource($woreda);
     }
 
     // Display the specified woreda
@@ -37,7 +40,9 @@ class WoredaController extends Controller
     {
         $zone = Zone::findOrFail($zoneId);
         $woreda = $zone->woredas()->findOrFail($id);
-        return response()->json($woreda);
+
+        // Wrap the woreda in WoredaResource
+        return new WoredaResource($woreda);
     }
 
     // Update the specified woreda
@@ -54,7 +59,8 @@ class WoredaController extends Controller
             'name' => $request->name,
         ]);
 
-        return response()->json($woreda);
+        // Wrap the updated woreda in WoredaResource
+        return new WoredaResource($woreda);
     }
 
     // Remove the specified woreda
@@ -64,7 +70,7 @@ class WoredaController extends Controller
         $woreda = $zone->woredas()->findOrFail($id);
         $woreda->delete();
 
-        return response()->json(null, 204);
+        // Return a success response
+        return response()->json(['message' => 'Woreda deleted successfully'], 204);
     }
 }
-
